@@ -51,13 +51,6 @@ Cancel-to-trade ratio line chart
 
 Clearly label the non-obvious insight:
 
-text
-> **Non-obvious insight:** During short "hot" windows the
-> cancel-to-trade ratio spikes above 1, meaning the system
-> generates more cancellations than executions despite elevated
-> message traffic. This is consistent with adverse selection
-> behaviour and is not visible from simple aggregate counts.
-> These periods are explored in depth in Section 3.
 2.5 Notional Value Analysis (code + markdown)
 Answers: "Define attributes not directly observable"
 
