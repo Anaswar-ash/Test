@@ -1,94 +1,119 @@
-#Uncleaned
+## 1. Raw Data Profile (Pre-Cleaning)
 
-Text/categorical fields (sym, event_type, order_type, side, order_id, endtag, tradets) are stored as strings.
+**Shape:** 30,200 rows × 11 columns
 
-Numeric fields (price, quantity, client_tag, inception_pnl) are stored as floats.
+**Column Types**
+- Text/categorical: `tradets`, `sym`, `event_type`, `order_type`, `side`, `order_id`, `endtag`
+- Numeric: `price`, `quantity`, `client_tag`, `inception_pnl`
 
-Interpretation:(numerics/not done the strings)
-price
-Has negative values (min = -24577.5), which are impossible as real prices.
-Has an extremely large max 9,999,999, which is almost certainly a sentinel / error code, not a real market price.
-Typical prices (median 158.205, 75% quantile 4995.25) look like realistic FX / XAUUSD / NAS100 values.
-quantity
-Has negative quantities (min = -49), which don’t make sense as volume, since direction is already in side.
-Max quantity is huge (4.98e7), indicating some very large trades or possibly testing/extreme cases.
-client_tag
-Looks like a code spanning a fixed range (21389 to 73106). Quartiles are neat (40599, 51842, 62471), so this seems fine.
-inception_pnl
-Reasonable PnL range: roughly -75 to +79. This looks like some PnL metric with symmetric-ish distribution, no obvious errors.
- 
- Shape: (30200, 11)
+**Missing Values Identified**
 
-Dtypes:
-tradets           object
-sym               object
-event_type        object
-order_type        object
-side              object
-price            float64
-quantity         float64
-order_id          object
-client_tag       float64
-endtag            object
-inception_pnl    float64
-dtype: object
+| Column | Missing |
+|---|---|
+| `tradets` | 176 |
+| `side` | 42 |
+| `price` | 300 |
+| `client_tag` | 273 |
+| `endtag` | 206 |
+| All others | 0 |
 
-Missing values:
-tradets          176
-sym                0
-event_type         0
-order_type         0
-side              42
-price            300
-quantity           0
-order_id           0
-client_tag       273
-endtag           206
-inception_pnl      0
-dtype: int64
+**Numeric Field Interpretation**
 
-Numeric summary:
-              price      quantity    client_tag  inception_pnl
-count  2.990000e+04  3.020000e+04  29927.000000   30200.000000
-mean   5.607063e+03  8.809990e+04  48959.882681       8.245348
-std    1.160018e+05  1.690701e+06  18124.717451      16.927948
-min   -2.457750e+04 -4.900000e+01  21389.000000     -74.577400
-25%    1.150600e+00  2.100000e+01  40599.000000      -2.721525
-50%    1.582050e+02  3.700000e+01  51842.000000       8.689400
-75%    4.995250e+03  1.000000e+02  62471.000000      19.467550
-max    9.999999e+06  4.985220e+07  73106.000000      78.579400
- 
- #Cleaned
-Rows removed by symbol-specific bounds: 81
-Dropped exact duplicates: 197
+- `price`: Negative values present (min = −24,577.5) — impossible as real market prices.
+  Extreme max of 9,999,999 is almost certainly a sentinel/error code.
+  Typical values (median 158.2, Q3 4,995.25) look like realistic FX/XAUUSD/NAS100 levels.
+- `quantity`: Negative values present (min = −49) — nonsensical as volume since
+  direction is already encoded in `side`. Max of 49.8M indicates extreme outliers
+  or corrupted fields.
+- `client_tag`: Fixed range (21,389 to 73,106) with clean quartiles — no obvious errors.
+- `inception_pnl`: Range −74.6 to +78.6, roughly symmetric — no obvious errors.
 
-Numeric summary:
-              price      quantity    client_tag  inception_pnl    ts_seconds
-count  29330.000000  2.933000e+04  29330.000000   29330.000000  29330.000000
-mean    4221.293237  9.048124e+04  48536.825060       8.271214   1797.496533
-std     8102.372709  1.715088e+06  18624.565853      16.914777   1039.091723
-min        1.147500  0.000000e+00     -1.000000     -74.577400      0.000000
-25%        1.150650  2.100000e+01  40599.000000      -2.663100    903.325000
-50%      158.225000  3.700000e+01  51842.000000       8.720100   1801.750000
-75%     4995.300000  1.000000e+02  62471.000000      19.487200   2700.000000
-max    24623.500000  4.985220e+07  73106.000000      78.579400   3599.700000
-               min         max
-sym                           
-EURUSD      1.1475      1.1514
-GBPUSD      1.3270      1.3304
-NAS100  24456.0000  24623.5000
-USDJPY    158.1850    159.1450
-XAUUSD   4987.6000   5010.7000
+---
 
- --- Dataset Segmentation Results ---
-Total Cleaned Events (df_clean): 29330
-Directional Trades Only (df_dir): 29248
-Non-directional / Market Making excluded: 82
+## 2. Cleaning Summary
 
+**Rows removed by symbol-specific price bounds:** 81  
+**Exact duplicates dropped:** 197  
+**Final cleaned dataset:** 29,330 rows
 
-#Analytic Findings
+**Post-Cleaning Numeric Profile**
 
-Trade share is strikingly consistent across all instruments at
-approximately 33%, meaning roughly one in three messages results
-in an actual execution regardless of instrument, suggesting a
-systematic and disciplined order submission pattern. 
+| Metric | price | quantity | client_tag | inception_pnl | ts_seconds |
+|---|---|---|---|---|---|
+| count | 29,330 | 29,330 | 29,330 | 29,330 | 29,330 |
+| min | 1.1475 | 0.0 | −1.0 | −74.577 | 0.0 |
+| median | 158.23 | 37.0 | 51,842 | 8.72 | 1,801.75 |
+| max | 24,623.5 | 49,852,200 | 73,106 | 78.579 | 3,599.7 |
+
+**Price ranges by instrument after cleaning**
+
+| Instrument | Min | Max |
+|---|---|---|
+| EURUSD | 1.1475 | 1.1514 |
+| GBPUSD | 1.3270 | 1.3304 |
+| USDJPY | 158.185 | 159.145 |
+| XAUUSD | 4,987.60 | 5,010.70 |
+| NAS100 | 24,456.00 | 24,623.50 |
+
+**Dataset Segmentation**
+
+| Dataset | Rows | Description |
+|---|---|---|
+| `df_clean` | 29,330 | Full cleaned event stream |
+| `df_dir` | 29,248 | Directional trades only (side ∈ {buy, sell}) |
+| Excluded | 82 | Non-directional / null side (market-making) |
+
+---
+
+## 3. Analytic Findings
+
+### 3.1 Market Activity
+- EURUSD dominates by event count and total traded volume
+- Trade share is strikingly consistent at **~33%** across all five instruments —
+  roughly one in three messages results in an actual execution regardless of instrument,
+  suggesting a systematic and disciplined order submission pattern
+- Directional flow is almost perfectly balanced at **50/50 buy vs sell**,
+  consistent with deliberate hedging or risk-neutral systematic execution
+- The 50/50 split is computed on `df_dir` — the subset of `df_clean` restricted to
+  `side ∈ {buy, sell}` — excluding the 82 non-directional and null-side rows so the
+  ratio is not distorted by unclassified flow
+
+### 3.2 Execution Efficiency — Fill Rate
+- Fill rates exceed **95%** on every instrument — indicating aggressive IOC-style execution
+- EURUSD fill rate **101.3%** — partial fills generating multiple TRADE events per NEW order
+- USDJPY lowest at **95.6%** — marginally thinner liquidity or wider spreads
+
+### 3.3 Time Profile
+- Cancel-to-trade ratio **never crosses 1.0** in any single minute window
+- Session average **0.60x** — executions consistently outnumber cancellations throughout
+- Session peak at **minute 39 (0.76x)** — flagged for abnormal activity investigation
+
+### 3.4 Notional Value
+- NAS100 dominates economic exposure — median executed trade **~$688K**, max **$26.85M**
+- XAUUSD second — median notional **~$140K** per trade
+- FX pairs (EURUSD, GBPUSD) median **~$50** — fractional lot sizes, not standard FX convention
+- All top 10 largest trades by notional are NAS100
+
+### 3.5 Strategy PnL Leaderboard
+- **26 strategies** tracked across the session
+- **16 winners (61.5%)**, **10 losers (38.5%)**
+- Total session PnL: **$233.48**
+- Most profitable: **66214_ld_kjdfiefiriig (+$39.05)**
+- Heaviest loss: **47362_oijuhygtr45 (−$22.41)**
+- Top strategy accounts for only **12.4% of total winning PnL** —
+  profits are broadly distributed, not concentrated in a single name
+- **$10.58 unattributed** under `UNKNOWN_ENDTAG` — requires re-tagging in production
+
+---
+
+## 4. Non-Obvious Insights
+
+- **Execution discipline:** The cancel-to-trade ratio never exceeds 0.76x in any minute
+  and averages 0.60x — this consistency is invisible from aggregate counts alone and
+  only emerges from the minute-level time profile
+- **PnL vs notional disconnect:** Total session PnL is only $233.48 against tens of
+  millions in NAS100 notional exposure — implying tight risk limits, delta-neutral
+  positioning, or a normalised return metric rather than raw dollar PnL
+- **Profit breadth:** The top strategy holds only 12.4% of total winning PnL —
+  the book is not dependent on any single strategy, which is a structural health signal
+  that would not be visible from total PnL alone
