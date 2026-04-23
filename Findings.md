@@ -84,3 +84,11 @@ XAUUSD   4987.6000   5010.7000
 Total Cleaned Events (df_clean): 29330
 Directional Trades Only (df_dir): 29248
 Non-directional / Market Making excluded: 82
+
+
+#Analytic Findings
+
+Trade share is strikingly consistent across all instruments at
+approximately 33%, meaning roughly one in three messages results
+in an actual execution regardless of instrument, suggesting a
+systematic and disciplined order submission pattern. 
