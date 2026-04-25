@@ -1,5 +1,15 @@
 # 3. Abnormal Activity
 
+CELL 1 — Markdown — 3.1 Section 3 master header
+CELL 2 — Markdown — 3.2 Wash trade + order ID explanation
+CELL 3 — Code     — 3.2 Wash trade + order ID execution
+CELL 4 — Markdown — 3.3 Volume spikes + cancel surge explanation  
+CELL 5 — Code     — 3.3 Volume spikes + cancel surge execution
+CELL 6 — Markdown — 3.4 Strategy dominance + unified matrix explanation
+CELL 7 — Code     — 3.4 Strategy dominance + unified matrix execution
+CELL 8 — Markdown — 3.5 Section 3 conclusion
+
+
 ## Goal
 Identify periods and behaviours that deviate meaningfully from the typical
 patterns established in Section 2. The aim is not to flag every statistical
@@ -60,7 +70,7 @@ that combines all signals into a single risk view.
 | 3.5 Unified Anomaly Matrix | Cross-signal synthesis | Summary |
 
 ---
-## 3.1 Wash Trade Screen — Structural Demonstration (Updated idea)
+## Wash Trade Screen — Structural Demonstration (Updated idea)
 
 ### Important Caveat
 A formal wash trade investigation requires multiple sessions of data
@@ -97,7 +107,7 @@ specificity, a match is almost certainly a genuine self-cross.
 - Price within 1 tick (not just exact) to catch near-crosses
 - Notional threshold filter to ignore trivially small crosses
 
-## 3.1 Wash Trade Screen (old idea)
+## Wash Trade Screen (old idea)
 
 ### Definition
 A wash trade occurs when a buyer and seller of the same instrument are
@@ -147,7 +157,7 @@ higher than reported here.
 
 ---
 
-## 3.2 Volume Spikes
+## Volume Spikes
 
 ### Definition
 A volume spike is a minute where total traded quantity for a given
@@ -186,7 +196,7 @@ assumption is reasonable for this dataset.
 
 ---
 
-## 3.3 Cancel Surge
+## Cancel Surge
 
 ### Definition
 A cancel surge is a minute where the ratio of CANCEL to TRADE events
@@ -234,7 +244,7 @@ aggregate masking instrument-specific stress.
 
 ---
 
-## 3.4 Strategy Dominance
+## Strategy Dominance
 
 ### Definition
 A strategy dominance flag is raised when a single `endtag` accounts for
@@ -279,7 +289,7 @@ differences identified in Section 2.5.
 
 ---
 
-## 3.5 Unified Anomaly Matrix
+## Unified Anomaly Matrix
 
 ### Definition
 A single cross-signal risk summary that compiles every `endtag` flagged
