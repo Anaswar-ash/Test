@@ -2,7 +2,7 @@ Section 2 – Basic Analytics:Proposed Flow
 2.1 Goal & Overview (markdown only)
 State the three pillars: Market Activity, Execution Efficiency, Profitability
 
-List all derived attributes you will define and justify each:
+List all derived attributes I will define and justify each:
 
 fill_rate = TRADE / NEW per symbol
 

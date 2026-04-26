@@ -69,7 +69,7 @@ that combines all signals into a single risk view.
 | 3.4 Strategy Dominance | Concentration risk | Medium |
 | 3.5 Unified Anomaly Matrix | Cross-signal synthesis | Summary |
 
----
+
 ## Wash Trade Screen — Structural Demonstration (Updated idea)
 
 ### Important Caveat
@@ -155,7 +155,6 @@ If multiple client tags map to the same underlying entity via prime
 brokerage or give-up arrangements, true wash trading exposure would be
 higher than reported here.
 
----
 
 ## Volume Spikes
 
@@ -194,7 +193,6 @@ within each instrument as a first-pass approximation. Given the consistent
 33% trade share observed across all instruments in Section 2.2, this
 assumption is reasonable for this dataset.
 
----
 
 ## Cancel Surge
 
@@ -242,7 +240,6 @@ Cancel-to-trade ratio is computed at session level across all instruments.
 A per-instrument breakdown is provided in the drill-down to prevent the
 aggregate masking instrument-specific stress.
 
----
 
 ## Strategy Dominance
 
@@ -287,7 +284,6 @@ volume spike analysis. A notional-based dominance measure would produce
 different results for NAS100 vs FX pairs given the price level
 differences identified in Section 2.5.
 
----
 
 ## Unified Anomaly Matrix
 
@@ -320,7 +316,6 @@ The matrix answers this by showing signal co-occurrence:
 
 endtag | wash_trade | vol_spike | cancel_surge | dominance | total_flags
 
----
 
 ## DataFrames Used
 
@@ -330,7 +325,6 @@ endtag | wash_trade | vol_spike | cancel_surge | dominance | total_flags
 | `df_trades` | Wash trade screen (TRADE events only) |
 | `df_dir` | Directional drill-downs where side is required |
 
----
 
 ## Summary of All Signals
 
